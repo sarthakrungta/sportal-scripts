@@ -297,7 +297,7 @@ chrome_options = webdriver.ChromeOptions()
 # Add your options as needed    
 options = [
   # Define window size here
-   "--window-size=1200,1200",
+    "--window-size=1200,1200",
     "--ignore-certificate-errors"
  
     #"--headless",
@@ -305,7 +305,7 @@ options = [
     #"--window-size=1920,1200",
     #"--ignore-certificate-errors",
     #"--disable-extensions",
-    #"--no-sandbox",
+    "--no-sandbox",
     #"--disable-dev-shm-usage",
     #'--remote-debugging-port=9222'
 ]
@@ -316,6 +316,7 @@ for option in options:
 conn = connect_db()
 
 driver = webdriver.Chrome(options = chrome_options)
+
 
 get_club_info(conn, url, email, driver)
 conn.close()
