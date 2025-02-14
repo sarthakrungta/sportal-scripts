@@ -1,20 +1,13 @@
-import os
-import psycopg2
-import json
-import time
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+import json
+import chromedriver_autoinstaller
+from pyvirtualdisplay import Display
 from bs4 import BeautifulSoup
 import re
 
-#url = "https://www.playhq.com/cricket-australia/org/ashburton-willows-cricket-club/55f5bdce"
-#url = "https://www.playhq.com/cricket-australia/org/carnegie-cricket-club/df628a00"
-#url = "https://www.playhq.com/cricket-australia/org/cucc-kings/6e4ab302"
-url = "https://www.playhq.com/cricket-australia/org/murrumbeena-cricket-club/de3182fc"
 
-# Database connection
 def connect_db():
     DATABASE_URL = 'postgresql://sportal_database_user:6h6G3tE82CnKPjF5fXbFY4tT6ffZD3Aa@dpg-crn2e6l6l47c73a8ll0g-a.singapore-postgres.render.com/sportal_database'
 
@@ -22,21 +15,6 @@ def connect_db():
     #Replace user and password with your Postgres username and password, host and #port with the values in your database URL, and database_name with the name of #your database.
 
     return conn
-
-# Insert or update club data into the database
-def insert_club_data(conn, email, club_data):
-    print("INSERT DATA CHECK", email)
-    cursor = conn.cursor()
-    query = """
-    INSERT INTO clubs_dirty (email, clubdata)
-    VALUES (%s, %s)
-    ON CONFLICT (email)
-    DO UPDATE SET clubdata = EXCLUDED.clubdata
-    """
-    cursor.execute(query, (email, json.dumps(club_data)))
-    conn.commit()
-    cursor.close()
-
 
 def get_players(isHome, link, driver):
     playerList = []
@@ -176,6 +154,9 @@ def get_teams(soup, seasonName, driver):
     print("TEAMS CHECK 3", teams)
     return teams
 
+
+
+
 def get_club_info(conn, url, email, driver):
     
     try:
@@ -277,13 +258,63 @@ def get_club_info(conn, url, email, driver):
         driver.quit()
 
 
-# Main
-if __name__ == "__main__":
-    driver = webdriver.Safari()
-    conn = connect_db()
-    #email = "test@ashburton.com"
-    #email = "test@carnegie.com"
-    #email = "test@cucckings.com"
-    email = "test@murrumbeena.com"
-    get_club_info(conn, url, email, driver)
-    conn.close()
+def insert_club_data(conn, email, club_data):
+    print("INSERT DATA CHECK", email)
+    cursor = conn.cursor()
+    query = """
+    INSERT INTO clubs_dirty (email, clubdata)
+    VALUES (%s, %s)
+    ON CONFLICT (email)
+    DO UPDATE SET clubdata = EXCLUDED.clubdata
+    """
+    cursor.execute(query, (email, json.dumps(club_data)))
+    conn.commit()
+    cursor.close()
+
+#######################
+
+#url = "https://www.playhq.com/cricket-australia/org/ashburton-willows-cricket-club/55f5bdce"
+#url = "https://www.playhq.com/cricket-australia/org/carnegie-cricket-club/df628a00"
+#url = "https://www.playhq.com/cricket-australia/org/cucc-kings/6e4ab302"
+url = "https://www.playhq.com/cricket-australia/org/murrumbeena-cricket-club/de3182fc"
+
+#email = "test@ashburton.com"
+#email = "test@carnegie.com"
+#email = "test@cucckings.com"
+email = "test@murrumbeena.com"
+
+###################################
+
+display = Display(visible=0, size=(800, 800))  
+display.start()
+
+chromedriver_autoinstaller.install()  # Check if the current version of chromedriver exists
+                                      # and if it doesn't exist, download it automatically,
+                                      # then add chromedriver to path
+
+chrome_options = webdriver.ChromeOptions()    
+# Add your options as needed    
+options = [
+  # Define window size here
+   "--window-size=1200,1200",
+    "--ignore-certificate-errors"
+ 
+    #"--headless",
+    #"--disable-gpu",
+    #"--window-size=1920,1200",
+    #"--ignore-certificate-errors",
+    #"--disable-extensions",
+    #"--no-sandbox",
+    #"--disable-dev-shm-usage",
+    #'--remote-debugging-port=9222'
+]
+
+for option in options:
+    chrome_options.add_argument(option)
+
+conn = connect_db()
+
+driver = webdriver.Chrome(options = chrome_options)
+
+get_club_info(conn, url, email, driver)
+conn.close()
