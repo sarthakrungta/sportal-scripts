@@ -10,8 +10,9 @@ from bs4 import BeautifulSoup
 import re
 
 #url = "https://www.playhq.com/cricket-australia/org/ashburton-willows-cricket-club/55f5bdce"
-url = "https://www.playhq.com/cricket-australia/org/carnegie-cricket-club/df628a00"
+#url = "https://www.playhq.com/cricket-australia/org/carnegie-cricket-club/df628a00"
 #url = "https://www.playhq.com/cricket-australia/org/cucc-kings/6e4ab302"
+url = "https://www.playhq.com/cricket-australia/org/murrumbeena-cricket-club/de3182fc"
 
 # Database connection
 def connect_db():
@@ -281,7 +282,8 @@ if __name__ == "__main__":
     driver = webdriver.Safari()
     conn = connect_db()
     #email = "test@ashburton.com"
-    email = "test@carnegie.com"
+    #email = "test@carnegie.com"
     #email = "test@cucckings.com"
+    email = "test@murrumbeena.com"
     get_club_info(conn, url, email, driver)
     conn.close()
