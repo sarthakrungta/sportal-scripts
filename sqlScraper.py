@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import json
+import psycopg2
 import chromedriver_autoinstaller
 from pyvirtualdisplay import Display
 from bs4 import BeautifulSoup
